@@ -36,7 +36,10 @@ export async function checkAccess(user) {
     }
     return { allowed: true, isOwner };
   } catch (e) {
-    if (e.code === 'permission-denied') return { allowed: false, isOwner: false };
+    console.error('[access check]', e);
+    if (e.code === 'permission-denied') {
+      return { allowed: false, isOwner: false, ownerEmailMatch: isOwner, code: e.code, detail: e.message };
+    }
     throw e;
   }
 }

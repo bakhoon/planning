@@ -34,7 +34,7 @@ export default function App() {
   if (user === undefined || (user && !access)) return <Loading />;
   if (!user) return <Login />;
   if (access.error) return <ErrorScreen message={access.error} />;
-  if (!access.allowed) return <Denied email={user.email} />;
+  if (!access.allowed) return <Denied email={user.email} access={access} />;
 
   if (view.name === 'editor') {
     return (
