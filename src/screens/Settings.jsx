@@ -12,7 +12,7 @@ export default function Settings({ user, isOwner, onBack }) {
   const [msg, setMsg] = useState('');
   const [busy, setBusy] = useState(false);
 
-  useEffect(() => watchAccessList(setEmails, (e) => setMsg('목록을 불러오지 못했습니다: ' + e.message)), []);
+  useEffect(() => watchAccessList(setEmails, (e) => setMsg('Could not load the list: ' + e.message)), []);
 
   const update = async (next) => {
     setBusy(true);
@@ -20,7 +20,7 @@ export default function Settings({ user, isOwner, onBack }) {
     try {
       await saveAccessList(next);
     } catch (e) {
-      setMsg('저장하지 못했습니다: ' + e.message);
+      setMsg('Could not save: ' + e.message);
     } finally {
       setBusy(false);
     }
@@ -30,11 +30,11 @@ export default function Settings({ user, isOwner, onBack }) {
     e.preventDefault();
     const v = draft.trim().toLowerCase();
     if (!EMAIL_RE.test(v)) {
-      setMsg('이메일 형식을 확인해주세요.');
+      setMsg('Please enter a valid email address.');
       return;
     }
     if (emails?.includes(v)) {
-      setMsg('이미 목록에 있는 이메일입니다.');
+      setMsg('That email is already on the list.');
       return;
     }
     await update([...(emails || []), v]);
@@ -42,7 +42,7 @@ export default function Settings({ user, isOwner, onBack }) {
   };
 
   const remove = (email) => {
-    if (!window.confirm(`${email} 의 접근 권한을 삭제할까요?`)) return;
+    if (!window.confirm(`Remove access for ${email}?`)) return;
     update((emails || []).filter((x) => x !== email));
   };
 
@@ -58,9 +58,9 @@ export default function Settings({ user, isOwner, onBack }) {
       a.download = `planning-backup-${data.exportedAt.slice(0, 10)}.json`;
       a.click();
       URL.revokeObjectURL(url);
-      setMsg(`${data.count}개 항목을 내보냈습니다.`);
+      setMsg(`Exported ${data.count} items.`);
     } catch (e) {
-      setMsg('내보내기 실패: ' + e.message);
+      setMsg('Export failed: ' + e.message);
     } finally {
       setBusy(false);
     }
@@ -69,34 +69,34 @@ export default function Settings({ user, isOwner, onBack }) {
   return (
     <div className="screen app">
       <header className="navbar">
-        <button type="button" className="icon-btn" onClick={onBack} aria-label="뒤로">
+        <button type="button" className="icon-btn" onClick={onBack} aria-label="Back">
           <Icon name="back" size={22} />
         </button>
-        <h1 className="nav-title">설정</h1>
+        <h1 className="nav-title">Settings</h1>
         <span />
       </header>
 
       <main className="content settings">
         <section className="stack-10">
           <div className="stack-4">
-            <h2 className="section-title">접근 허용 이메일</h2>
-            <p className="muted small">이 목록의 이메일로 Google 로그인한 계정만 플래너를 열 수 있습니다.</p>
+            <h2 className="section-title">Allowed emails</h2>
+            <p className="muted small">Only Google accounts with an email on this list can open the planner.</p>
           </div>
 
           <ul className="card list">
-            {emails === null && <li className="row muted small">불러오는 중…</li>}
+            {emails === null && <li className="row muted small">Loading…</li>}
             {(emails || []).map((email) => {
               const owner = email === OWNER_EMAIL;
               return (
                 <li key={email} className="row">
                   <span className="email">{email}</span>
-                  {owner && <span className="badge">소유자</span>}
+                  {owner && <span className="badge">Owner</span>}
                   {!owner && isOwner && (
                     <button
                       type="button"
                       className="icon-btn tight"
                       onClick={() => remove(email)}
-                      aria-label={`${email} 삭제`}
+                      aria-label={`Remove ${email}`}
                       disabled={busy}
                     >
                       <Icon name="trash" size={18} />
@@ -109,7 +109,7 @@ export default function Settings({ user, isOwner, onBack }) {
 
           {isOwner ? (
             <form className="field" onSubmit={add}>
-              <label htmlFor="newEmail" className="field-label">이메일 추가</label>
+              <label htmlFor="newEmail" className="field-label">Add email</label>
               <div className="row-gap">
                 <input
                   id="newEmail"
@@ -122,31 +122,31 @@ export default function Settings({ user, isOwner, onBack }) {
                   onChange={(e) => setDraft(e.target.value)}
                 />
                 <button type="submit" className="btn primary compact" disabled={busy || !draft.trim()}>
-                  추가
+                  Add
                 </button>
               </div>
             </form>
           ) : (
-            <p className="muted small">목록은 소유자만 수정할 수 있습니다.</p>
+            <p className="muted small">Only the owner can edit this list.</p>
           )}
 
           <div className="notice">
             <Icon name="shield" size={16} />
-            <span>권한 확인은 서버의 보안 규칙에서 처리되므로 앱 코드를 바꿔도 우회할 수 없습니다.</span>
+            <span>Access is checked by server-side security rules, so it can't be bypassed by changing the app code.</span>
           </div>
         </section>
 
         <section className="stack-10">
-          <h2 className="section-title">계정</h2>
-          <p className="muted small">{user.email} 으로 로그인됨</p>
+          <h2 className="section-title">Account</h2>
+          <p className="muted small">Signed in as {user.email}</p>
           <div className="card list">
             <button type="button" className="row action" onClick={backup} disabled={busy}>
               <Icon name="download" size={18} />
-              데이터 백업 내보내기 (JSON)
+              Export backup (JSON)
             </button>
             <button type="button" className="row action danger" onClick={() => signOut(auth)}>
               <Icon name="logout" size={18} />
-              로그아웃
+              Sign out
             </button>
           </div>
         </section>

@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// base './' : GitHub Pages의 어떤 레포 이름에서도 동작하도록 상대 경로로 빌드
+// base './': relative asset paths so the build works under any GitHub Pages repo name
 export default defineConfig({
   plugins: [react()],
   base: './',

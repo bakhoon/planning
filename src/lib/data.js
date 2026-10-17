@@ -15,15 +15,15 @@ import {
 } from 'firebase/firestore';
 import { db, OWNER_EMAIL } from './firebase.js';
 
-export const TYPES = ['할 일', '회의', '마감', '메모'];
+export const TYPES = ['Task', 'Meeting', 'Deadline', 'Note'];
 
 const accessRef = () => doc(db, 'config', 'access');
 const itemsCol = (uid) => collection(db, 'users', uid, 'items');
 
 /**
- * 로그인한 사람이 들어올 수 있는지 확인.
- * 진짜 판단은 Firestore 보안 규칙이 하고, 여기서는 그 결과를 읽기만 함.
- * 규칙이 거부하면 getDoc 이 permission-denied 로 실패 -> 접근 불가.
+ * Check whether the signed-in user may enter.
+ * The real decision is made by the Firestore security rules; this only reads the result.
+ * If the rules deny access, getDoc fails with permission-denied -> access denied.
  */
 export async function checkAccess(user) {
   const email = (user.email || '').toLowerCase();
@@ -31,7 +31,7 @@ export async function checkAccess(user) {
   try {
     const snap = await getDoc(accessRef());
     if (!snap.exists() && isOwner) {
-      // 처음 로그인: 허용 목록 문서를 소유자 이메일로 생성
+      // First sign-in: create the allowlist document with the owner's email
       await setDoc(accessRef(), { emails: [OWNER_EMAIL], updatedAt: serverTimestamp() });
     }
     return { allowed: true, isOwner };
@@ -55,7 +55,7 @@ export async function saveAccessList(emails) {
   await setDoc(accessRef(), { emails: clean, updatedAt: serverTimestamp() });
 }
 
-// 날짜 범위의 항목을 실시간으로 구독 (주간 스트립 점 표시 + 선택한 날 리스트)
+// Live subscription to items in a date range (week strip dots + selected day list)
 export function watchItems(uid, fromKey, toKey, cb, onError) {
   const q = query(
     itemsCol(uid),

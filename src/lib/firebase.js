@@ -20,7 +20,7 @@ export const OWNER_EMAIL = (import.meta.env.VITE_OWNER_EMAIL || '').trim().toLow
 export const app = isConfigured ? initializeApp(firebaseConfig) : null;
 export const auth = app ? getAuth(app) : null;
 
-// 오프라인 캐시: 인터넷이 잠깐 끊겨도 보고 쓸 수 있고, 다시 연결되면 자동 동기화
+// Offline cache: works without a connection and syncs automatically when back online
 export const db = app
   ? initializeFirestore(app, {
       localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),

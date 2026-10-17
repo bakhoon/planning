@@ -10,7 +10,7 @@ import Editor from './screens/Editor.jsx';
 import Settings from './screens/Settings.jsx';
 
 export default function App() {
-  const [user, setUser] = useState(undefined); // undefined = 확인 중, null = 로그아웃
+  const [user, setUser] = useState(undefined); // undefined = checking, null = signed out
   const [access, setAccess] = useState(null); // { allowed, isOwner } | { error }
   const [view, setView] = useState({ name: 'planner' });
   const [date, setDate] = useState(todayKey());
@@ -71,7 +71,7 @@ export default function App() {
 function Loading() {
   return (
     <div className="screen center" aria-busy="true">
-      <div className="spinner" aria-label="불러오는 중" />
+      <div className="spinner" aria-label="Loading" />
     </div>
   );
 }
@@ -79,10 +79,10 @@ function Loading() {
 function SetupNeeded() {
   return (
     <div className="screen padded">
-      <h1 className="title">설정이 필요합니다</h1>
+      <h1 className="title">Setup required</h1>
       <p className="muted">
-        Firebase 설정값이 없습니다. 로컬에서는 <code>.env.local</code>, GitHub 배포에서는 레포의
-        Actions Variables 에 <code>VITE_FIREBASE_*</code> 값을 넣어주세요.
+        Firebase config is missing. Add the <code>VITE_FIREBASE_*</code> values to{' '}
+        <code>.env.local</code> for local development, or to the repo's Actions Variables for GitHub deploys.
       </p>
     </div>
   );
@@ -91,10 +91,10 @@ function SetupNeeded() {
 function ErrorScreen({ message }) {
   return (
     <div className="screen padded">
-      <h1 className="title">연결 오류</h1>
+      <h1 className="title">Connection error</h1>
       <p className="muted">{message}</p>
       <button type="button" className="btn primary" onClick={() => window.location.reload()}>
-        다시 시도
+        Try again
       </button>
     </div>
   );

@@ -24,19 +24,19 @@ export default function Denied({ email }) {
           <Icon name="lock" size={28} />
         </div>
         <div className="stack-8">
-          <h1 className="title">접근 권한이 없습니다</h1>
+          <h1 className="title">Access denied</h1>
           <p className="muted">
-            이 플래너는 허용된 이메일로만 사용할 수 있습니다. {left}초 후 자동으로 로그아웃됩니다.
+            This planner is only available to approved emails. You will be signed out in {left}s.
           </p>
         </div>
         <div className="card info-card">
-          <span className="label-sm">로그인한 계정</span>
+          <span className="label-sm">Signed in as</span>
           <span className="strong">{email}</span>
         </div>
       </div>
 
       <button type="button" className="btn dark" onClick={() => signOut(auth)}>
-        다른 계정으로 로그인
+        Sign in with another account
       </button>
     </div>
   );

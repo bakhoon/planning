@@ -1,12 +1,12 @@
 const COLORS = {
-  '할 일': '#2457C5',
-  회의: '#B8590E',
-  마감: '#B42318',
-  메모: '#5B636E',
+  Task: '#2457C5',
+  Meeting: '#B8590E',
+  Deadline: '#B42318',
+  Note: '#5B636E',
 };
 
 export default function TypeTag({ type }) {
-  const c = COLORS[type] || COLORS['메모'];
+  const c = COLORS[type] || COLORS.Note;
   return (
     <span className="tag" style={{ color: c, background: c + '14', borderColor: c + '40' }}>
       {type}

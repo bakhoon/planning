@@ -5,7 +5,7 @@ import Icon from '../components/Icon.jsx';
 import TypeTag from '../components/TypeTag.jsx';
 
 export default function Planner({ user, date, onDateChange, onNew, onEdit, onSettings }) {
-  const start = addDays(date, -3); // 선택한 날이 가운데 오도록
+  const start = addDays(date, -3); // keep the selected day centered
   const end = addDays(start, 6);
   const [items, setItems] = useState(null);
   const [error, setError] = useState('');
@@ -53,7 +53,7 @@ export default function Planner({ user, date, onDateChange, onNew, onEdit, onSet
           <div className="stack-2">
             <span className="label-sm">{monthLabel(date)}</span>
             <div className="date-title-wrap">
-              <button type="button" className="date-title" onClick={openPicker} aria-label="날짜 선택">
+              <button type="button" className="date-title" onClick={openPicker} aria-label="Pick a date">
                 {longLabel(date)}
               </button>
               <input
@@ -67,18 +67,18 @@ export default function Planner({ user, date, onDateChange, onNew, onEdit, onSet
               />
               {!isToday && (
                 <button type="button" className="chip-btn" onClick={() => onDateChange(todayKey())}>
-                  오늘
+                  Today
                 </button>
               )}
             </div>
           </div>
-          <button type="button" className="icon-btn bordered" onClick={onSettings} aria-label="설정">
+          <button type="button" className="icon-btn bordered" onClick={onSettings} aria-label="Settings">
             <Icon name="settings" />
           </button>
         </div>
 
         <div className="week">
-          <button type="button" className="week-arrow" onClick={() => onDateChange(addDays(date, -7))} aria-label="이전 주">
+          <button type="button" className="week-arrow" onClick={() => onDateChange(addDays(date, -7))} aria-label="Previous week">
             <Icon name="chevronLeft" size={18} />
           </button>
           {days.map((d) => {
@@ -98,24 +98,24 @@ export default function Planner({ user, date, onDateChange, onNew, onEdit, onSet
               </button>
             );
           })}
-          <button type="button" className="week-arrow" onClick={() => onDateChange(addDays(date, 7))} aria-label="다음 주">
+          <button type="button" className="week-arrow" onClick={() => onDateChange(addDays(date, 7))} aria-label="Next week">
             <Icon name="chevronRight" size={18} />
           </button>
         </div>
       </header>
 
       <main className="content">
-        {error && <p className="error-text" role="alert">불러오기 실패: {error}</p>}
+        {error && <p className="error-text" role="alert">Couldn't load items: {error}</p>}
 
-        {items === null && !error && <div className="spinner small" aria-label="불러오는 중" />}
+        {items === null && !error && <div className="spinner small" aria-label="Loading" />}
 
         {items !== null && list.length > 0 && (
           <>
             <div className="stack-8">
               <div className="row-between small">
-                <span className="strong">진행률</span>
+                <span className="strong">Progress</span>
                 <span className="muted">
-                  {list.length}개 중 {doneCount}개 완료
+                  {doneCount} of {list.length} done
                 </span>
               </div>
               <div className="progress" aria-hidden="true">
@@ -131,7 +131,7 @@ export default function Planner({ user, date, onDateChange, onNew, onEdit, onSet
                     className={'check' + (it.done ? ' on' : '')}
                     onClick={() => setDone(user.uid, it.id, !it.done)}
                     aria-pressed={it.done}
-                    aria-label={it.title + (it.done ? ' 완료 취소' : ' 완료로 표시')}
+                    aria-label={(it.done ? 'Mark not done: ' : 'Mark done: ') + it.title}
                   >
                     <span className="check-box">{it.done && <Icon name="check" size={14} stroke={3.5} />}</span>
                   </button>
@@ -151,15 +151,15 @@ export default function Planner({ user, date, onDateChange, onNew, onEdit, onSet
 
         {items !== null && list.length === 0 && !error && (
           <div className="empty">
-            <span className="strong">등록된 항목이 없습니다</span>
-            <span className="muted small">아래 버튼으로 새 항목을 추가하세요.</span>
+            <span className="strong">Nothing planned</span>
+            <span className="muted small">Add an item with the button below.</span>
           </div>
         )}
       </main>
 
       <button type="button" className="fab" onClick={onNew}>
         <Icon name="plus" size={18} stroke={2.6} />
-        새 항목
+        New item
       </button>
     </div>
   );

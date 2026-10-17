@@ -3,10 +3,10 @@ import { createItem, removeItem, TYPES, updateItem } from '../lib/data.js';
 import Icon from '../components/Icon.jsx';
 
 const PLACEHOLDERS = {
-  '할 일': '예: 주간 보고서 작성',
-  회의: '예: 팀 미팅',
-  마감: '예: 디자인 리뷰 제출',
-  메모: '예: 확인할 내용',
+  Task: 'e.g. Write weekly report',
+  Meeting: 'e.g. Team sync',
+  Deadline: 'e.g. Submit design review',
+  Note: 'e.g. Something to remember',
 };
 
 export default function Editor({ user, item, defaultDate, onClose }) {
@@ -35,19 +35,19 @@ export default function Editor({ user, item, defaultDate, onClose }) {
       else await createItem(user.uid, form);
       onClose(form.date);
     } catch (err) {
-      setError('저장하지 못했습니다: ' + (err.message || err));
+      setError('Could not save: ' + (err.message || err));
       setBusy(false);
     }
   };
 
   const remove = async () => {
-    if (!window.confirm('이 항목을 삭제할까요?')) return;
+    if (!window.confirm('Delete this item?')) return;
     setBusy(true);
     try {
       await removeItem(user.uid, item.id);
       onClose();
     } catch (err) {
-      setError('삭제하지 못했습니다: ' + (err.message || err));
+      setError('Could not delete: ' + (err.message || err));
       setBusy(false);
     }
   };
@@ -55,12 +55,12 @@ export default function Editor({ user, item, defaultDate, onClose }) {
   return (
     <form className="screen app" onSubmit={save}>
       <header className="navbar">
-        <button type="button" className="icon-btn" onClick={() => onClose()} aria-label="닫기">
+        <button type="button" className="icon-btn" onClick={() => onClose()} aria-label="Close">
           <Icon name="close" size={22} />
         </button>
-        <h1 className="nav-title">{editing ? '항목 수정' : '새 항목'}</h1>
+        <h1 className="nav-title">{editing ? 'Edit item' : 'New item'}</h1>
         {editing ? (
-          <button type="button" className="icon-btn danger" onClick={remove} aria-label="삭제" disabled={busy}>
+          <button type="button" className="icon-btn danger" onClick={remove} aria-label="Delete" disabled={busy}>
             <Icon name="trash" />
           </button>
         ) : (
@@ -70,7 +70,7 @@ export default function Editor({ user, item, defaultDate, onClose }) {
 
       <main className="content form">
         <div className="field">
-          <span id="typeLabel" className="field-label">유형</span>
+          <span id="typeLabel" className="field-label">Type</span>
           <div className="segmented" role="group" aria-labelledby="typeLabel">
             {TYPES.map((t) => (
               <button
@@ -87,7 +87,7 @@ export default function Editor({ user, item, defaultDate, onClose }) {
         </div>
 
         <div className="field">
-          <label htmlFor="title" className="field-label">제목</label>
+          <label htmlFor="title" className="field-label">Title</label>
           <input
             id="title"
             className="input"
@@ -103,12 +103,12 @@ export default function Editor({ user, item, defaultDate, onClose }) {
 
         <div className="grid-2">
           <div className="field">
-            <label htmlFor="date" className="field-label">날짜</label>
+            <label htmlFor="date" className="field-label">Date</label>
             <input id="date" className="input" type="date" value={form.date} onChange={set('date')} required />
           </div>
           <div className="field">
             <label htmlFor="time" className="field-label">
-              시간 <span className="optional">(선택)</span>
+              Time <span className="optional">(optional)</span>
             </label>
             <input id="time" className="input" type="time" value={form.time} onChange={set('time')} />
           </div>
@@ -116,7 +116,7 @@ export default function Editor({ user, item, defaultDate, onClose }) {
 
         <div className="field">
           <label htmlFor="note" className="field-label">
-            메모 <span className="optional">(선택)</span>
+            Notes <span className="optional">(optional)</span>
           </label>
           <textarea
             id="note"
@@ -124,7 +124,7 @@ export default function Editor({ user, item, defaultDate, onClose }) {
             rows={4}
             value={form.note}
             onChange={set('note')}
-            placeholder="자세한 내용을 적어주세요"
+            placeholder="Add details"
             maxLength={2000}
           />
         </div>
@@ -134,10 +134,10 @@ export default function Editor({ user, item, defaultDate, onClose }) {
 
       <footer className="bottombar">
         <button type="button" className="btn outline" onClick={() => onClose()}>
-          취소
+          Cancel
         </button>
         <button type="submit" className="btn primary" disabled={!canSave}>
-          {busy ? '저장 중…' : '저장'}
+          {busy ? 'Saving…' : 'Save'}
         </button>
       </footer>
     </form>
